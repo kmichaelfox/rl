@@ -10,39 +10,66 @@ import com.kmichaelfox.agents.es.MLPAgent;
 
 public class Main {
 	public static void main(String[] args) {
-//		RLAgent a = new RLAgent(0.1f, 0.2f, 0.3f, LearningType.SARSA);
-//		a.learn();
-//		
-//		a = new RLAgent(0.6f, 0.7f, 0.8f, LearningType.QLEARNING);
-//		a.learn();
+		int iterations = 1000;
 		
+		//
+		//	Q-Learning
+		//
+		DataWriter out = new DataWriter("AltReward_QLearning_Standard.txt");
 		String argsString = "-vis off";
 		MarioAIOptions marioAIOptions = new MarioAIOptions(argsString);
-	    final Agent qAgent = new RLAgent(0.6f, 0.8f, 0.1f, LearningType.QLEARNING);
+	    final Agent qAgent = new RLAgent(0.8f, 0.7f, 0.1f, LearningType.QLEARNING);
 	    marioAIOptions.setAgent(qAgent);
 	    //marioAIOptions.setExitProgramWhenFinished(true);
 	    BasicTask task = new BasicTask(marioAIOptions);
 	    
 	    // learning loop
-	    int iterations = 1000;
 	    ArrayList<Float> fitnesses = new ArrayList<Float>();
 	    for (int i = 0; i < iterations; i++) {
 	    	task.runSingleEpisode(1);
-	    	System.out.println(i + " " + task.getEvaluationInfo().computeBasicFitness());
+	    	out.println("" + task.getEvaluationInfo().computeWeightedFitness());
 	    }
-	    fitnesses.add((float)task.getEvaluationInfo().computeBasicFitness());
+	    //fitnesses.add((float)task.getEvaluationInfo().computeBasicFitness());
 	    System.out.println("learning complete");
 	    // performance test run
 	    marioAIOptions.setVisualization(true);
 	    marioAIOptions.setFPS(30);
 	    task.runSingleEpisode(1);
+	    out.closeFile();
 	    
-	    
-	    
-	    
+	    // run with alternative reward
+	    out = new DataWriter("AltReward_QLearning_Alternative.txt");
 	    argsString = "-vis off";
 	    marioAIOptions = new MarioAIOptions(argsString);
-	    final Agent sarsaAgent = new RLAgent(0.6f, 0.8f, 0.1f, LearningType.SARSA);
+	    final Agent qAgent2 = new RLAgent(0.8f, 0.7f, 0.1f, LearningType.QLEARNING);
+	    ((RLAgent)qAgent2).useAlternateReward(true);
+	    marioAIOptions.setAgent(qAgent2);
+	    //marioAIOptions.setExitProgramWhenFinished(true);
+	    task = new BasicTask(marioAIOptions);
+	    
+	    // learning loop
+	    for (int i = 0; i < iterations; i++) {
+	    	task.runSingleEpisode(1);
+	    	out.println("" + task.getEvaluationInfo().computeWeightedFitness());
+	    }
+	    //fitnesses.add((float)task.getEvaluationInfo().computeBasicFitness());
+	    System.out.println("learning complete");
+	    // performance test run
+	    marioAIOptions.setVisualization(true);
+	    marioAIOptions.setFPS(30);
+	    task.runSingleEpisode(1);
+	    out.closeFile();
+	    
+	    
+	    
+	    
+	    //
+		//	SARSA
+		//
+		out = new DataWriter("AltReward_SARSA_Standard.txt");
+		argsString = "-vis off";
+		marioAIOptions = new MarioAIOptions(argsString);
+	    final Agent sarsaAgent = new RLAgent(0.8f, 0.7f, 0.1f, LearningType.SARSA);
 	    marioAIOptions.setAgent(sarsaAgent);
 	    //marioAIOptions.setExitProgramWhenFinished(true);
 	    task = new BasicTask(marioAIOptions);
@@ -50,19 +77,61 @@ public class Main {
 	    // learning loop
 	    for (int i = 0; i < iterations; i++) {
 	    	task.runSingleEpisode(1);
-	    	System.out.println(i + " " + task.getEvaluationInfo().computeBasicFitness());
+	    	out.println("" + task.getEvaluationInfo().computeWeightedFitness());
 	    }
-	    fitnesses.add((float)task.getEvaluationInfo().computeBasicFitness());
 	    System.out.println("learning complete");
 	    // performance test run
 	    marioAIOptions.setVisualization(true);
 	    marioAIOptions.setFPS(30);
 	    task.runSingleEpisode(1);
+	    out.closeFile();
 	    
+	    // run with alternative reward
+		out = new DataWriter("AltReward_SARSA_Alternative.txt");
+	    argsString = "-vis off";
+	    marioAIOptions = new MarioAIOptions(argsString);
+	    final Agent sarsaAgent2 = new RLAgent(0.8f, 0.7f, 0.1f, LearningType.SARSA);
+	    ((RLAgent)sarsaAgent2).useAlternateReward(true);
+	    marioAIOptions.setAgent(sarsaAgent2);
+	    //marioAIOptions.setExitProgramWhenFinished(true);
+	    task = new BasicTask(marioAIOptions);
 	    
-	    System.out.println("\n\n\n\n");
-	    System.out.println("QLearning Fitness: "+fitnesses.get(0));
-	    System.out.println("SARSA Fitness: "+fitnesses.get(1));
+	    // learning loop
+	    for (int i = 0; i < iterations; i++) {
+	    	task.runSingleEpisode(1);
+	    	out.println("" + task.getEvaluationInfo().computeWeightedFitness());
+	    }
+	    //fitnesses.add((float)task.getEvaluationInfo().computeBasicFitness());
+	    System.out.println("learning complete");
+	    // performance test run
+	    marioAIOptions.setVisualization(true);
+	    marioAIOptions.setFPS(30);
+	    task.runSingleEpisode(1);
+	    out.closeFile();
+	    
+//	    argsString = "-vis off";
+//	    marioAIOptions = new MarioAIOptions(argsString);
+//	    final Agent sarsaAgent = new RLAgent(0.6f, 0.8f, 0.1f, LearningType.SARSA);
+//	    marioAIOptions.setAgent(sarsaAgent);
+//	    //marioAIOptions.setExitProgramWhenFinished(true);
+//	    task = new BasicTask(marioAIOptions);
+//	    
+//	    // learning loop
+//	    for (int i = 0; i < iterations; i++) {
+//	    	task.runSingleEpisode(1);
+//	    	System.out.println(i + " " + task.getEvaluationInfo().computeBasicFitness());
+//	    }
+//	    fitnesses.add((float)task.getEvaluationInfo().computeBasicFitness());
+//	    System.out.println("learning complete");
+//	    // performance test run
+//	    marioAIOptions.setVisualization(true);
+//	    marioAIOptions.setFPS(30);
+//	    task.runSingleEpisode(1);
+//	    
+//	    
+//	    System.out.println("\n\n\n\n");
+//	    System.out.println("QLearning Fitness: "+fitnesses.get(0));
+//	    System.out.println("SARSA Fitness: "+fitnesses.get(1));
 	    
 	    System.exit(0);
 	}

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import ch.idsia.benchmark.mario.engine.sprites.Mario;
-import ch.idsia.benchmark.mario.environments.Environment;
 
 public class SARSA implements RLAlgorithm {
 	private RLAgent agent;
 	private Random rand;
+	private boolean alternateReward = false;
 	
 	public SARSA(RLAgent agent) {
 		this.agent = agent;
@@ -102,25 +102,29 @@ public class SARSA implements RLAlgorithm {
 	}
 	
 	private float calculateReward(int previousState, int currentState) {
-		if (agent.getMarioStatus() == Mario.STATUS_DEAD) {
-			return -100.0f;
-		} else if (agent.getMarioStatus() == Mario.STATUS_WIN) {
-			return 100.0f;
-		}
-		
-		if ((currentState&RLAgent.MARIO_STUCK)==RLAgent.MARIO_STUCK) {
-			return -10.0f;
-		}
-		
-		if (agent.getPreviousProgress() > agent.getCurrentProgress()) {
-			//System.out.println("moving backward");
-			return -1.0f;
-		} else if (agent.getPreviousProgress() < agent.getCurrentProgress()) {
-			return 5.0f;
-		}
-		
-		if (agent.getPreviousKillsTotal() < agent.getKillsTotal()) {
-			return 50.0f;
+		if (alternateReward) {
+			return agent.getCurrentFitness() - agent.getPreviousFitness();
+		} else {
+			if (agent.getMarioStatus() == Mario.STATUS_DEAD) {
+				return -100.0f;
+			} else if (agent.getMarioStatus() == Mario.STATUS_WIN) {
+				return 100.0f;
+			}
+			
+			if ((currentState&RLAgent.MARIO_STUCK)==RLAgent.MARIO_STUCK) {
+				return -10.0f;
+			}
+			
+			if (agent.getPreviousProgress() > agent.getCurrentProgress()) {
+				//System.out.println("moving backward");
+				return -1.0f;
+			} else if (agent.getPreviousProgress() < agent.getCurrentProgress()) {
+				return 5.0f;
+			}
+			
+			if (agent.getPreviousKillsTotal() < agent.getKillsTotal()) {
+				return 50.0f;
+			}
 		}
 		
 		return 0.0f;
@@ -159,5 +163,9 @@ public class SARSA implements RLAlgorithm {
 				a == Action.JUMP_FIRE || a == Action.L_JUMP_FIRE || a == Action.R_JUMP_FIRE) {
 			agent.pressKey(Mario.KEY_SPEED);
 		}
+	}
+	
+	public void useAlternateReward(boolean b) {
+		alternateReward = b;
 	}
 }

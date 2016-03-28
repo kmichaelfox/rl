@@ -37,10 +37,12 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 	
 	private int currentState;
 	private float currentProgress = 0.0f;
+	private float currentFitness = 0.0f;
 	private int previousState = 0;
 	private float previousProgress = 0.0f;
 	private Action previousAction= Action.D;
 	private int previousKillsTotal = 0;
+	private float previousFitness = 0;
 	
 	private HashMap<Integer, float[]> qTable;
 	
@@ -111,8 +113,15 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 //			System.out.println(currentState);
 //		}
 		previousKillsTotal = getKillsTotal;
+		previousFitness = currentFitness;
 		
 		return action;
+	}
+	
+	@Override
+	public void integrateObservation(Environment e) {
+		super.integrateObservation(e);
+		currentFitness = e.getEvaluationInfo().computeWeightedFitness();
 	}
 	
 	public void reset() {
@@ -225,10 +234,13 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 	
 	public int getCurrentState() {return currentState;};
 	public float getCurrentProgress() {return currentProgress;};
+	public float getCurrentFitness() {return currentFitness;};
+	
 	public int getPreviousState() {return previousState;};
 	public float getPreviousProgress() {return previousProgress;};
 	public Action getPreviousAction() {return previousAction;};
 	public void setPreviousAction(Action a) {previousAction = a;};
+	public float getPreviousFitness() {return previousFitness;};
 	
 	public void pressKey(int key) {
 		action[key] = true;
@@ -236,6 +248,10 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 	
 	public void updateState(int bitFlag) {
 		currentState += bitFlag;
+	}
+	
+	public void useAlternateReward(boolean b) {
+		learningProc.useAlternateReward(b);
 	}
 
 	@Override

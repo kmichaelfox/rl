@@ -2,6 +2,10 @@ All of the paramater varying trials can be run and written to file by executing:
 
 	com.kmichaelfox.rl.ParameterTrials
 
+The alternate reward function comparison trials can be run and written file by execting:
+	
+	com.kmichaelfox.rl.Main
+
 Creation of a learning agent requires four arguments:
 
 	RLAgent(float alpha, float gamma, float epsilon, LearningType type)
