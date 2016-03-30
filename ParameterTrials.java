@@ -10,7 +10,7 @@ import com.kmichaelfox.agents.es.MLPAgent;
 
 public class ParameterTrials {
 	public static void main(String[] args) {
-		int iterations = 2000;
+		int iterations = 1000;
 		
 		float[] alphas = { 0.6f, 0.7f, 0.8f };
 		float[] gammas = { 0.6f, 0.7f, 0.8f };
