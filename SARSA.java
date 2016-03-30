@@ -15,7 +15,7 @@ public class SARSA implements RLAlgorithm {
 		rand = new Random();
 	}
 	
-	public void execute() {
+	public void execute(float a, float g, float e) {
 		// get new state
 		findCurrentState();
 		
@@ -24,12 +24,13 @@ public class SARSA implements RLAlgorithm {
 		float[] nextActions = agent.getActions(agent.getCurrentState());
 		
 		int nextMaxQIdx = findNextMaxQAction(nextActions);
-		if (rand.nextFloat() < agent.getEpsilon()) {
+		if (rand.nextFloat() < e) {
 			nextMaxQIdx = rand.nextInt(12);
 		}
 		
 		float reward = calculateReward(agent.getPreviousState(), agent.getCurrentState());
-		previousActions[agent.getPreviousAction().idx()] = previousActions[agent.getPreviousAction().idx()] + agent.getAlpha() * (reward + agent.getGamma() * nextActions[nextMaxQIdx] - previousActions[agent.getPreviousAction().idx()]);
+		agent.setRewardTotal(agent.getRewardTotal() + reward); // log the reward
+		previousActions[agent.getPreviousAction().idx()] = previousActions[agent.getPreviousAction().idx()] + a * (reward + g * nextActions[nextMaxQIdx] - previousActions[agent.getPreviousAction().idx()]);
 		
 		// take action for next state, first check for chance of exploration
 		applyAction(Action.getAction(nextMaxQIdx));
@@ -107,9 +108,10 @@ public class SARSA implements RLAlgorithm {
 		} else {
 			if (agent.getMarioStatus() == Mario.STATUS_DEAD) {
 				return -100.0f;
-			} else if (agent.getMarioStatus() == Mario.STATUS_WIN) {
-				return 100.0f;
-			}
+			} 
+//			else if (agent.getMarioStatus() == Mario.STATUS_WIN) {
+//				return 100.0f;
+//			}
 			
 			if ((currentState&RLAgent.MARIO_STUCK)==RLAgent.MARIO_STUCK) {
 				return -10.0f;
@@ -119,11 +121,11 @@ public class SARSA implements RLAlgorithm {
 				//System.out.println("moving backward");
 				return -1.0f;
 			} else if (agent.getPreviousProgress() < agent.getCurrentProgress()) {
-				return 5.0f;
+				return 15.0f;
 			}
 			
 			if (agent.getPreviousKillsTotal() < agent.getKillsTotal()) {
-				return 50.0f;
+				return 10.0f;
 			}
 		}
 		

@@ -34,6 +34,7 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 	private float alpha;
 	private float gamma;
 	private float epsilon;
+	private boolean learning = true;
 	
 	private int currentState;
 	private float currentProgress = 0.0f;
@@ -42,13 +43,15 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 	private float previousProgress = 0.0f;
 	private Action previousAction= Action.D;
 	private int previousKillsTotal = 0;
-	private float previousFitness = 0;
+	private float previousFitness = 0.0f;
 	
 	private HashMap<Integer, float[]> qTable;
 	
+	private int episodeCounter = 0;
 	private int counter = 0;
 	private int colCounter = 0;
 	private int column = 0;
+	private float totalReward = 0.0f;
 	
 	public RLAgent(float alpha, float gamma, float epsilon, LearningType type) {
 		super(type.getName()+"Agent");
@@ -105,7 +108,11 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 		currentProgress = marioFloatPos[0];
 		currentState = 0;
 		
-		learningProc.execute(); // updates action based on learningProc provided
+		if (learning) {
+			learningProc.execute(alpha, gamma, epsilon); // updates action based on learningProc provided
+		} else {
+			learningProc.execute(0.0f, gamma, 0.01f); // non-learning trial
+		}
 		
 		//System.out.println(qTable.size());
 		
@@ -168,9 +175,9 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 		float[] actions = qTable.get(state);
 		if (actions == null) {
 			actions = new float[12];
-			for (int i = 0; i < actions.length; i++) {
-				actions[i] = (float)(rand.nextGaussian() * 0.1);
-			}
+//			for (int i = 0; i < actions.length; i++) {
+//				actions[i] = (float)(rand.nextGaussian() * 0.1);
+//			}
 			qTable.put(state, actions);
 		}
 		
@@ -221,6 +228,9 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 		return getReceptiveFieldCellValue(marioEgoRow + 1, marioEgoCol + 1) == 0;
 	}
 	
+	public float getRewardTotal() {return totalReward;};
+	public void setRewardTotal(float v) {totalReward = v;};
+	
 	public int getKillsTotal() {return getKillsTotal;};
 	public int getKillsByFire() {return getKillsByFire;};
 	public int getKillsByStomp() {return getKillsByStomp;};
@@ -258,6 +268,10 @@ public class RLAgent extends BasicMarioAIAgent implements LearningAgent {
 	public void learn() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void setIsLearning(boolean b) {
+		learning = b;
 	}
 }
 enum LearningType {

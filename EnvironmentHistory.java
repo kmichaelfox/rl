@@ -19,6 +19,10 @@ public class EnvironmentHistory {
 		history.add(info.toStringSingleLine());
 	}
 	
+	public void logHistory(String s) {
+		history.add(System.currentTimeMillis() + " " + s);
+	}
+	
 	public void writeHistoryToFile() {
 		for (int i = 0; i < history.size(); i++) {
 			out.println(history.get(i));

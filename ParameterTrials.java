@@ -29,7 +29,18 @@ public class ParameterTrials {
 		    //ArrayList<Float> fitnesses = new ArrayList<Float>();
 		    for (int i = 0; i < iterations; i++) {
 		    	task.runSingleEpisode(1);
-		    	out.println("" + task.getEvaluationInfo().computeWeightedFitness());
+		    	if (i % 20 == 0) {
+		    		((RLAgent)qAgent).setIsLearning(false);
+		    		float fitness = 0;
+		    		for (int k = 0; k < 100; k++) {
+		    			task.runSingleEpisode(1);
+		    			fitness += task.getEvaluationInfo().computeWeightedFitness();
+		    		}
+		    		//out.println("" + task.getEvaluationInfo().computeWeightedFitness());
+		    		fitness /= 100.0f;
+		    		out.println(""+fitness);
+		    		((RLAgent)qAgent).setIsLearning(true);
+		    	}
 		    }
 		    //fitnesses.add((float)task.getEvaluationInfo().computeBasicFitness());
 		    System.out.println("learning complete");
@@ -54,7 +65,19 @@ public class ParameterTrials {
 		    //ArrayList<Float> fitnesses = new ArrayList<Float>();
 		    for (int i = 0; i < iterations; i++) {
 		    	task.runSingleEpisode(1);
-		    	out.println("" + task.getEvaluationInfo().computeWeightedFitness());
+		    	if (i % 20 == 0) {
+		    		((RLAgent)qAgent).setIsLearning(false);
+		    		float fitness = 0;
+		    		for (int k = 0; k < 100; k++) {
+		    			task.runSingleEpisode(1);
+		    			fitness += task.getEvaluationInfo().computeWeightedFitness();
+		    		}
+		    		//out.println("" + task.getEvaluationInfo().computeWeightedFitness());
+		    		fitness /= 100.0f;
+		    		out.println(""+fitness);
+		    		((RLAgent)qAgent).setIsLearning(true);
+		    	}
+		    	//out.println("" + task.getEvaluationInfo().computeWeightedFitness());
 		    }
 		    //fitnesses.add((float)task.getEvaluationInfo().computeBasicFitness());
 		    System.out.println("learning complete");
@@ -81,5 +104,7 @@ public class ParameterTrials {
 //	    marioAIOptions.setVisualization(true);
 //	    marioAIOptions.setFPS(30);
 //	    task.runSingleEpisode(1);
+		
+		System.exit(0);
 	}
 }
