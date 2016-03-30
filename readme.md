@@ -1,12 +1,12 @@
-This project is a package for the MarioAI simulation project (version 0.1.9), where the source code of this package should be imported to the MarioAI project in the package com.kmichaelfox.rl
+This project is a package for the MarioAI simulation project (version 0.1.9), where the source code of this package should be imported to the MarioAI project in the package com.kmichaelfox.agents.rl
 
 All of the paramater varying trials can be run and written to file by executing:
 
-	com.kmichaelfox.rl.ParameterTrials
+	com.kmichaelfox.agents.rl.ParameterTrials
 
 The alternate reward function comparison trials can be run and written file by execting:
 	
-	com.kmichaelfox.rl.Main
+	com.kmichaelfox.agents.rl.Main
 
 Creation of a learning agent requires four arguments:
 
